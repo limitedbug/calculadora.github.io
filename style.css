@@ -1,65 +1,187 @@
-button{
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    background-color: #25292c;
-    border: 2px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    margin: 5px;
-    font-size: large;
+button {
+    border-radius: 12px;
+    background-color: transparent;
+    border: none;
+    margin: 0;
+    padding: 0;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
 }
 
 button:hover {
-    background-color: #1b1c20;
+    background-color: rgba(255, 255, 255, 0.1);
 }
-.buttons-numbers{
+
+button.pressed {
+    background-color: rgba(255,255,255,0.14) !important;
+    transform: translateY(1px) scale(0.995);
+}
+
+.buttons-numbers {
     color: white;
 }
-.buttons-actions{
-    color: #307af7;
+
+.buttons-actions {
+    color: #27c76f;
 }
-.button-result{
-    border-radius: 25px;
-    height: 110px;
-    background-color: #307af7;
+
+.button-result {
+    border-radius: 12px;
+    background-color: #27c76f;
     color: white;
+    grid-row: span 2; /* span two rows in its column */
 }
-.button-result:hover{
-    background-color: #1d4994;
+.button-result:hover {
+    background-color: #50d28a;
 }
-.actions{
+
+/* When the equals button is pressed (keyboard or simulated), use the hover color and avoid transform */
+.button-result.pressed,
+.button-result:active {
+    background-color: #50d28a !important;
+    transform: none !important;
+}
+
+.button-clear {
+    color: #ff4757 !important;
+}
+
+.actions {
     display: flex;
-    border-radius: 25px;
-    background-color: #212224;
-    padding: 10px;
+    align-items: stretch;
+    border-radius: 20px;
+    background-color: #191919;
+    padding: 8px;
+    gap: 6px;
 }
+
 .column {
+    display: grid;
+    /* ensure each button row has a sensible minimum height to avoid being squashed */
+    grid-template-rows: repeat(5, minmax(56px, 1fr));
+    gap: 8px;
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.box {
+    border-radius: 25px;
+    margin: auto;
+    width: 300px;
+    padding: 15px;
+    background-color: #191919;
+    transition: all 0.3s ease;
+}
+
+.box.fullscreen {
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    border-radius: 0;
     display: flex;
     flex-direction: column;
 }
-.box{
-    border-radius: 25px;
-    margin: auto;
-    width: 260px;
-    padding: 10px;
+
+.box.fullscreen .actions {
+    flex: 1;
+    gap: 10px;
 }
-input{
+
+.box.fullscreen button {
+    width: 100%;
+    height: 100%;
+    font-size: 24px;
+}
+
+.top-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.top-buttons button {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+}
+
+.top-buttons div {
+    display: flex;
+    gap: 5px;
+}
+
+.top-button {
+    color: white !important;
+}
+
+.scientific-section {
+    display: none;
+    gap: 6px;
+}
+
+.box.scientific {
+    display: block; /* allow margin: 0 auto to center the element */
+    width: -moz-fit-content;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto; /* keep centered */
+}
+
+.box.scientific .scientific-section {
+    display: flex;
+    margin-right: 8px;
+}
+
+.box.scientific .scientific-section .column {
+    flex: 0 0 90px; /* reserve width for scientific columns */
+    grid-template-rows: repeat(5, minmax(56px, 1fr));
+}
+
+.buttons-scientific {
+    color: white !important;
+    font-size: 16px !important;
+}
+
+.box.scientific .actions {
+    flex: 1;
+}
+
+.box.scientific .actions > .column {
+    flex: 0 0 90px; /* make normal action columns the same width as scientific columns */
+}
+input {
     border: none;
     background: transparent;
-    color: white;
+    color: white; /* input text should be white */
     width: 100%;
     text-align: right; 
     padding: 10px;  
     font-size: 20px;
 }
-input:focus{
+input:focus {
     outline: none;
     color: white;
-    caret-color: #307af7;
+    caret-color: #27c76f;
+}
+
+.result-display {
+    color: #9d9d9d;
+    text-align: right;
+    padding: 2px 10px 8px 10px;
+    font-size: 14px;
+    user-select: none;
 }
 .operations{
-    flex-direction:row-reverse;
     display: flex;
+    flex-direction: column; /* stack input and result vertically */
+    align-items: stretch;
+    gap: 2px;
 }
 .divider{
     padding: 10px;
