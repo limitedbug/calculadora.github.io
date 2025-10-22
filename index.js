@@ -8,6 +8,17 @@ function restoreState() {
         exprInput.value = savedState.expr;
         resultDisplay.textContent = savedState.res;
     }
+    if (savedState.isScientific !== undefined) {
+        const box = document.querySelector('.box');
+        const button = document.getElementById('toggle-scientific');
+        if (savedState.isScientific) {
+            box.classList.add('scientific');
+            button.textContent = '±';
+        } else {
+            box.classList.remove('scientific');
+            button.textContent = '√';
+        }
+    }
     localStorage.removeItem('calculatorState');
     document.querySelector('.box').style.display = '';
     document.getElementById('pro-msg').style.display = 'none';
@@ -16,8 +27,9 @@ function restoreState() {
 }
 
 // Function to update saved state (called from secondary on close)
-function updateSavedState(expr, res) {
-    localStorage.setItem('calculatorState', JSON.stringify({ expr: expr, res: res }));
+function updateSavedState(expr, res, isScientific = null) {
+    const current = JSON.parse(localStorage.getItem('calculatorState') || '{}');
+    localStorage.setItem('calculatorState', JSON.stringify({ expr: expr, res: res, isScientific: isScientific !== null ? isScientific : current.isScientific }));
 }
 
 document.getElementById('toggle-size').addEventListener('click', function() {
@@ -41,11 +53,16 @@ document.getElementById('toggle-size').addEventListener('click', function() {
     const features = `width=${width},height=${height},left=100,top=100,resizable=yes`;
 
     // Save current state
-    const savedState = { expr: exprInput.value, res: resultDisplay.textContent };
+    const savedState = { expr: exprInput.value, res: resultDisplay.textContent, isScientific: box.classList.contains('scientific') };
     localStorage.setItem('calculatorState', JSON.stringify(savedState));
 
     // clone the calculator box HTML (before hiding)
     const boxHtml = box.outerHTML;
+
+    // Prepare current state to pass to secondary
+    const currentExpr = exprInput.value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    const currentRes = resultDisplay.textContent.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    const currentIsScientific = box.classList.contains('scientific');
 
     // Switch to pro mode view: hide box, show message
     box.style.display = 'none';
@@ -182,12 +199,24 @@ document.getElementById('toggle-size').addEventListener('click', function() {
             // On close, save current state and restore parent
             window.addEventListener('beforeunload', () => {
                 if (window.opener && window.opener.updateSavedState) {
-                    window.opener.updateSavedState(exprInput.value, resultDisplay.textContent);
+                    const isScientific = document.querySelector('.box').classList.contains('scientific');
+                    window.opener.updateSavedState(exprInput.value, resultDisplay.textContent, isScientific);
                 }
                 if (window.opener && window.opener.restoreState) {
                     window.opener.restoreState();
                 }
             });
+
+            // Set initial state
+            exprInput.value = '${currentExpr}';
+            resultDisplay.textContent = '${currentRes}';
+            if (${currentIsScientific}) {
+                document.querySelector('.box').classList.add('scientific');
+                document.getElementById('toggle-scientific').textContent = '±';
+            } else {
+                document.querySelector('.box').classList.remove('scientific');
+                document.getElementById('toggle-scientific').textContent = '√';
+            }
 
             // Focus input initially
             exprInput && exprInput.focus();
